@@ -1,0 +1,180 @@
+# 配置名称: Clash 配置
+
+# 配置作者: Lucky
+
+# 👉 👉 👉 👉 👉 👉请在第100行填写你的订阅链接完成使用
+
+redir-port: 7892      # Redir 端口
+mixed-port: 7893      # 混合端口 HTTP和SOCKS5用一个端口
+geodata-mode: true    #【Meta专属】使用geoip.dat数据库(默认：false使用mmdb数据库)
+tcp-concurrent: false #【Meta专属】TCP 并发连接所有 IP, 将使用最快握手的 TCP
+allow-lan: true       # 允许局域网的连接（可用来共享代理）
+bind-address: "*"     # 仅在将allow-lan设置为true时适用
+                      # #"*": 绑定所有IP地址
+find-process-mode: strict           #匹配所有进程（always/strict/off）
+ipv6: false           # 开启 IPv6 总开关，关闭阻断所有 IPv6 链接和屏蔽 DNS 请求 AAAA 记录
+mode: rule            # 规则模式：rule（规则） / global（全局代理）/ direct（全局直连）/ script (脚本)
+log-level: info       # 设置日志输出级别 (5 个级别：silent / error / warning / info / debug）
+external-controller: 0.0.0.0:9093   #外部控制器,可以使用 RESTful API 来控制你的 clash 内核
+global-client-fingerprint: chrome   #全局 TLS 指纹，优先低于 proxy 内的 client-fingerprint
+                                    #可选： "chrome","firefox","safari","ios","random","none" options.
+
+geox-url:             #自定义 geodata url
+  mmdb: "https://raw.githubusercontent.com/Masaiki/GeoIP2-CN/release/Country.mmdb"
+
+profile:
+  store-selected: true # 存储 select 选择记录
+  store-fake-ip: true  # 持久化 fake-ip
+  
+sniffer:               # 嗅探域名 可选配置
+  enable: true
+  parse-pure-ip: true  # 是否使用嗅探结果作为实际访问，默认 true
+  sniff:
+    TLS:               # TLS 默认嗅探 443
+      ports: [443, 8443]
+    HTTP:
+      ports: [80, 8080-8880]
+      override-destination: true
+      
+tun:                   # Tun 配置
+  enable: true
+  stack: system        # 可选： system/gvisor/lwip
+                       # tun模式堆栈,如无使用问题,建议使用 system 栈;
+                       # MacOS 用户推荐 gvisor栈,IOS无法使用system栈
+  dns-hijack:          # dns劫持,一般设置为 any:53 即可, 即劫持所有53端口的udp流量
+     - 'any:53'
+# strict_route: true   # 将所有连接路由到tun来防止泄漏，但你的设备将无法其他设备被访问
+  auto-route: true     # 自动设置全局路由，可以自动将全局流量路由进入tun网卡。
+  auto-detect-interface: true     # 自动识别出口网卡
+        
+
+dns:
+  enable: true             # 禁用系统 DNS
+  ipv6: false              # 关闭 IPv6
+  enhanced-mode: fake-ip   # 增强模式：redir-host或fake-ip
+  listen: 0.0.0.0:53       # DNS监听地址
+  fake-ip-range: 198.18.0.1/16    # Fake-IP解析地址池
+  # fake ip 白名单列表'以下地址不会下发fakeip映射用于连接 
+  fake-ip-filter: ['*.lan', 'cable.auth.com', '*.msftconnecttest.com', '*.msftncsi.com', 'network-test.debian.org', 'detectportal.firefox.com', 'resolver1.opendns.com', '*.srv.nintendo.net', '*.stun.playstation.net', 'xbox.*.microsoft.com', '*.xboxlive.com', 'stun.*', 'global.turn.twilio.com', 'global.stun.twilio.com', 'localhost.*.qq.com', 'localhost.*.weixin.qq.com', '*.logon.battlenet.com.cn', '*.logon.battle.net', '*.blzstatic.cn', 'music.163.com', '*.music.163.com', '*.126.net', 'musicapi.taihe.com', 'music.taihe.com', 'songsearch.kugou.com', 'trackercdn.kugou.com', '*.kuwo.cn', 'api-jooxtt.sanook.com', 'api.joox.com', 'joox.com', 'y.qq.com', '*.y.qq.com', 'streamoc.music.tc.qq.com', 'mobileoc.music.tc.qq.com', 'isure.stream.qqmusic.qq.com', 'dl.stream.qqmusic.qq.com', 'aqqmusic.tc.qq.com', 'amobile.music.tc.qq.com', '*.xiami.com', '*.music.migu.cn', 'music.migu.cn', 'proxy.golang.org', '*.mcdn.bilivideo.cn', '*.cmpassport.com', 'id6.me', 'open.e.189.cn', 'mdn.open.wo.cn', 'opencloud.wostore.cn', 'auth.wosms.cn', '*.jegotrip.com.cn', '*.icitymobile.mobi', '*.pingan.com.cn', '*.cmbchina.com', 'pool.ntp.org', '*.pool.ntp.org', 'ntp.*.com', 'time.*.com', 'ntp?.*.com', 'time?.*.com', 'time.*.gov', 'time.*.edu.cn', '*.ntp.org.cn', 'PDC._msDCS.*.*', 'DC._msDCS.*.*', 'GC._msDCS.*.*']
+                          
+
+  nameserver:        # 常规 DNS 服务器
+    - 223.5.5.5
+    - 119.29.29.29
+    - https://doh.pub/dns-query
+    - https://dns.alidns.com/dns-query
+
+  fallback:          # 国外 DNS 服务器
+    - https://dns.google/dns-query
+    - https://cloudflare-dns.com/dns-query
+
+  fallback-filter:   # 回退过滤器
+    geoip: true      # GEOIP 启用
+    geoip-code: CN   # GEOIP 编码
+    ipcidr:          # IPCIDR
+      - 240.0.0.0/4  
+
+# =====================================================================================================================
+# 订阅更新与测试
+p:    &Lucky1 {type: http,     interval: 86400,  health-check: {enable: true, url: http://www.gstatic.com/generate_204, interval: 1800} }
+
+# 手动选择策略组
+use:  &Lucky2 {type: select,   use: [Subscribe] }
+
+# 策略组引用
+pr:   &Lucky3 {type: select,   proxies: [💖网速超快, 🟡延迟优选, DIRECT, 🧊香港节点, 🧊台湾节点, 🧊日本节点, 🧊韩国节点, 🧊新加坡节点, 🧊美国节点] }
+
+# 延迟优选策略组
+auto: &Lucky4 {type: url-test, lazy: true,  url: http://www.gstatic.com/generate_204, interval: 900, use: [Subscribe] }
+
+# 规则类型:domain
+d:    &Lucky5 {type: http,     behavior: domain,    interval: 86400}
+
+# 规则类型:classical
+c:    &Lucky6 {type: http,     behavior: classical, interval: 86400}
+
+# 规则类型:ipcidr
+i:    &Lucky7 {type: http,     behavior: ipcidr,    interval: 86400}
+# =====================================================================================
+# 代理
+proxy-providers:
+  Subscribe: {<<: *Lucky1, 
+  path: ./proxy-providers/Sub.yaml, 
+  url: 👉👉👉请在此处填写你的订阅链接👈👈👈&list=true&udp=true}
+    # 可以使用任意类型的链接替换上面文字,多个链接使用英文符号的竖杠|隔开一起写上即可
+    # Sub-Store生成的链接,可以直接替换上述url引号中的部分,具体见Sub-Store教程                       
+proxies: null
+# =======================================================================================================
+# 策略组
+proxy-groups:
+  - {name: 💖网速超快, <<: *Lucky2}
+
+  - {name: 🟡延迟优选, <<: *Lucky4}
+
+  - {name: 🍎苹果服务, <<: *Lucky3}
+
+  - {name: 📹哔哩哔哩, <<: *Lucky3}
+
+  - {name: 🟢国内视频, <<: *Lucky3}
+
+  - {name: 💽国外视频, <<: *Lucky3}
+
+  - {name: 🌏国外网站, <<: *Lucky3}
+
+  - {name: 💖法外狂徒, <<: *Lucky3}
+
+  - {name: 🧊香港节点, <<: *Lucky4, filter: "香港|港|HK|(?i)HongKong"}
+
+  - {name: 🧊台湾节点, <<: *Lucky4, filter: "台湾|湾|TW|(?i)Taiwan"}
+
+  - {name: 🧊日本节点, <<: *Lucky4, filter: "日本|日|JP|(?i)Japan"}
+
+  - {name: 🧊韩国节点, <<: *Lucky4, filter: "韩国|韩|KR|(?i)SouthKorea"}
+
+  - {name: 🧊新加坡节点, <<: *Lucky4, filter: "新加坡|狮|SG|(?i)Singapore"}
+
+  - {name: 🧊美国节点, <<: *Lucky4, filter: "美国|美|US|(?i)UnitedStates"}
+
+
+# 规则提供商
+rule-providers:
+  规则修正: {<<: *Lucky6, url: https://raw.githubusercontent.com/Centralmatrix3/Matrix-io/master/Clash/Ruleset/Unbreak.yaml, path: ./Ruleset/Unbreak.yaml}
+
+  广告拦截: {<<: *Lucky5, url: https://raw.githubusercontent.com/Centralmatrix3/Matrix-io/master/Clash/Ruleset/AdBlock.yaml, path: ./AdBlock.yaml}
+
+  国外视频: {<<: *Lucky6, url: https://raw.githubusercontent.com/Centralmatrix3/Matrix-io/master/Clash/Ruleset/Streaming.yaml, path: ./Ruleset/Streaming.yaml}
+
+  哔哩哔哩: {<<: *Lucky6, url: https://raw.githubusercontent.com/Centralmatrix3/Matrix-io/master/Clash/Ruleset/StreamingSE.yaml, path: ./Ruleset/StreamingSE.yaml}
+
+  国内视频: {<<: *Lucky6, url: https://raw.githubusercontent.com/Centralmatrix3/Matrix-io/master/Clash/Ruleset/StreamingCN.yaml, path: ./Ruleset/StreamingCN.yaml}
+
+  国外网站: {<<: *Lucky6, url: https://raw.githubusercontent.com/Centralmatrix3/Matrix-io/master/Clash/Ruleset/Global.yaml, path: ./Ruleset/Global.yaml}
+
+  苹果服务: {<<: *Lucky6, url: https://raw.githubusercontent.com/Centralmatrix3/Matrix-io/master/Clash/Ruleset/Apple.yaml, path: ./Ruleset/Apple.yaml}
+
+  局域网络: {<<: *Lucky6, url: https://raw.githubusercontent.com/Centralmatrix3/Matrix-io/master/Clash/Ruleset/LAN.yaml, path: ./Ruleset/LAN.yaml}
+
+# 规则 
+rules:
+  - RULE-SET, 规则修正, DIRECT
+  - RULE-SET, 广告拦截, REJECT
+  - RULE-SET, 国外视频, 💽国外视频
+  - RULE-SET, 哔哩哔哩, 📹哔哩哔哩
+  - RULE-SET, 国内视频, 🟢国内视频
+  - RULE-SET, 国外网站, 🌏国外网站
+  - RULE-SET, 苹果服务, 🍎苹果服务
+  - RULE-SET, 局域网络, DIRECT
+  - GEOIP, CN, DIRECT
+  - MATCH, 💖法外狂徒
+
+
+script:
+  shortcuts:
+    quic: network == 'udp' and dst_port == 443
+
+
+
+
+
+
+    
