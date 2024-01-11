@@ -1,0 +1,86 @@
+name: update
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0,12 * * *"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps: 
+    - name: Checkout target repository
+      uses: actions/checkout@v4.1.0
+      with:
+        repository: As-Lucky-Lucky
+        path: Matrix-io-repo
+
+    - name: Download AdBlock
+      run: |
+        mkdir -p Lucky-repo/Ruleset
+        { curl -L "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/QuantumultX/Advertising/Advertising.list"; echo ""; curl -L "https://raw.githubusercontent.com/fmz200/wool_scripts/main/QuantumultX/filter/fenliu.list"; } > Lucky-repo/Ruleset/AdBlock.list
+
+    - name: Processing Edits AdBlock
+      run: |
+       cd Lucky-repo/Ruleset
+       for file in AdBlock.list; do
+         if [ -f "$file" ]; then
+           # 替换关键词为大写
+           sed -i 's/host, /HOST,/I; s/host-suffix, /HOST-SUFFIX,/I; s/host-keyword, /HOST-KEYWORD,/I; s/ip-cidr ,/IP-CIDR,/I; s/ip6-cidr, /IP6-CIDR,/I; s/, reject/,REJECT/I' "$file"
+           # 修改Advertising
+           sed -i 's/,Advertising/,REJECT/g' "$file"
+           # 删除no-resolve
+           sed -i 's/,no-resolve//g' "$file"
+           sed -i 's/, no-resolve//g' "$file"
+           # 排序 0-9-A-Z
+           sort -o "$file" "$file"
+           # 删除注释与空行
+           sed -i '/^[[:space:]]*#/d; /^[[:space:]]*;/d; /^[[:space:]]*$/d' "$file"
+           # 删除重复的规则
+           awk '!seen[$0]++' "$file" > temp && mv temp "$file"
+         else
+           echo "$file not found."
+         fi
+       done
+
+    - name: Processing Edits AdBlock
+      run: |
+        cd Lucky-repo/Ruleset
+        for file in AdBlock.list; do
+          if [ -f "$file" ]; then
+            # 第一行添加 "规则名称:"
+            awk 'NR==1 {print "# 规则名称:AdBlock"} {print}' "$file" > tmpfile
+            mv tmpfile "$file"
+            # 第二行添加 "规则统计:"
+            awk 'NR==2 {print "# 规则统计:00000"} {print}' "$file" > tmpfile
+            mv tmpfile "$file"
+          # 第三行加空行
+          sed -i '2a\\' "$file"
+          # 删除的空白行
+          sed -i '3!{/^[[:space:]]*$/d}' "$file"
+          # 输出统计规则
+          line_count=$(tail -n +4 "$file" | wc -l)
+          sed -i "2s/[0-9]\+/$line_count/" "$file"
+          else
+            echo "$file not found."
+          fi
+        done
+
+    - name: Submit
+      run: |
+        cd Lucky-repo
+        if [[ -n $(git status -s) ]]; then
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add -A
+          git commit -m "update"
+          git push origin master
+        else
+          echo "No changes to commit."
+        fi
+
+    - name: Cleanup Workflow
+      uses: Mattraks/delete-workflow-runs@main
+      with:
+        retain_days: 0
+        keep_minimum_runs: 2
