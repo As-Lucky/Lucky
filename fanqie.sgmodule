@@ -4,7 +4,7 @@ DOMAIN-SUFFIX,ugsdk.cn,REJECT
 DOMAIN-SUFFIX,p3-reading-sign.fqnovelpic.com,REJECT
 DOMAIN-SUFFIX,p6-reading-sign.fqnovelpic.com,REJECT
 DOMAIN-SUFFIX,ecombdimg.com,REJECT
-DOMAIN-SUFFIX,api5-normal-sinfonlinec.fqnovel.com,DIRECT
+#DOMAIN-SUFFIX,api5-normal-sinfonlinec.fqnovel.com,DIRECT
 DOMAIN-SUFFIX,lf3-reading.fqnovelpic.com,REJECT
 DOMAIN-SUFFIX,mssdk.volces.com,REJECT
 DOMAIN-SUFFIX,toutiaocloud.net,REJECT 
@@ -24,10 +24,8 @@ DOMAIN-SUFFIX,byteimg.com,REJECT-NO-DROP,extended-matching
 DOMAIN,i.snssdk.com,REJECT-NO-DROP,extended-matching
 DOMAIN,i-lq.snssdk.com,REJECT-NO-DROP,extended-matching
 DOMAIN,dig.bdurl.net,REJECT-NO-DROP,extended-matching
-DOMAIN-KEYWORD,zijieapi,REJECT-NO-DROP,extended-matching
-DOMAIN,ads3-normal-lq.zijieapi.com,REJECT-NO-DROP,extended-matching
-DOMAIN,ads5-normal-lq.zijieapi.com,REJECT-NO-DROP,extended-matching
-DOMAIN,polaris3-normal-lq.zijieapi.com,REJECT-NO-DROP,extended-matching
+
+
 DOMAIN,activity-ag.awemeughun.com,REJECT-NO-DROP,extended-matching
 DOMAIN,mcs.snssdk.com,REJECT-NO-DROP,extended-matching
 DOMAIN,tnc3-alisc1.snssdk.com,REJECT-NO-DROP,extended-matching
