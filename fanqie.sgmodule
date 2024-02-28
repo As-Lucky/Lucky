@@ -11,7 +11,7 @@ DOMAIN-SUFFIX,toutiaocloud.net,REJECT
 DOMAIN-SUFFIX,p9-reading-sign.fqnovelpic.com,REJECT
 DOMAIN-KEYWORD,lf-,REJECT-NO-DROP,extended-matching
 DOMAIN-SUFFIX,toutiaocloud.com,REJECT-NO-DROP,extended-matching 
-DOMAIN-#SUFFIX,douyinpic.com,REJECT ,extended-matching
+
 DOMAIN-SUFFIX,content-open.douyin.com,REJECT-NO-DROP,extended-matching
 DOMAIN-KEYWORD,-lf,REJECT-NO-DROP,extended-matching
 DOMAIN-KEYWORD,applog-lf,REJECT-NO-DROP,extended-matching
